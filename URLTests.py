@@ -1,8 +1,11 @@
-from Utils import tokenize_url
+from URLProcessingUtils import tokenize_url
 from urllib import parse
+import urllib.request
 
 
 class URLTests:
+
+    op = urllib.request.build_opener()
 
     #Checks to see if the URL starts with 'https'.
     @staticmethod
@@ -33,6 +36,18 @@ class URLTests:
             if e in sen_words:
                 b = True
         print("Test Three Results: " + str(b))
+        return b
+
+    @staticmethod
+    def test_four(url):
+        b = False
+        try:
+            source = str(op.open(url))
+            c = source.count('<iframe')
+            if c > 0:
+                b = True
+        except Exception as e:
+            print("Error " + str(e) + " in downloading page " + "url")
         return b
 
     # @staticmethod

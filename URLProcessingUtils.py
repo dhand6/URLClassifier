@@ -20,21 +20,21 @@ def getURLRedirects(url):
         print(str(url) + " ::is no longer active")
 
 def getURLHostName(url):
-    parsed_uri = URLProcessingUtil.__parseURL(url)
+    parsed_uri = parseURL(url)
     if parsed_uri != None:
         return '{uri.netloc}'.format(uri=parsed_uri)
     else:
         return None
 
 def getURLDomainName(url):
-    parsed_uri = URLProcessingUtil.parseURL(url)
+    parsed_uri = parseURL(url)
     if parsed_uri != None:
         return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     else:
         return None
 
 def getURLIPAddress(url):
-    parsed_uri = URLProcessingUtil.__parseURL(url)
+    parsed_uri = parseURL(url)
     if parsed_uri != None:
         try:
             return socket.gethostbyname('{uri.netloc}'.format(uri=parsed_uri))
@@ -45,7 +45,7 @@ def getURLIPAddress(url):
         return None
 
 def getWhoIs(url):
-    ip = URLProcessingUtil.getURLIPAddress(url)
+    ip = getURLIPAddress(url)
     if ip != None:
         obj = IPWhois(ip)
         return obj.lookup_whois()
@@ -59,7 +59,7 @@ def getResAddress(res):
         return None
 
 def getResAddressCountry(res):
-    address = URLProcessingUtil.getResAddress(res)
+    address = getResAddress(res)
     if address != None:
         country = address.split("\n")[-1:]
         for c in pycountry.countries:

@@ -35,6 +35,11 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Classify URLs")
 	parser.add_argument("-t", "--train", dest='train', action='store_true', help='Run Training on Data')
 	parser.add_argument("-c", dest='classify', action='store', help='Classify Url')
+	parser.add_argument("-f", "--file",
+                        dest="filename",
+                        type=lambda x: is_valid_file(parser, x),
+                        help="write report to FILE",
+                        metavar="FILE")
 
 	args = parser.parse_args()
 
