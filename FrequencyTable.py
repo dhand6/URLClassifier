@@ -15,12 +15,12 @@ class FrequencyTable:
     def run_training(self, url, phishing):
         DBConnector().create_url_info(url, phishing)
         for method in self.test_methods:
+            #print(str(getattr(URLTests, method)) + " " + str(getattr(URLTests, method)(url)))
+            DBConnector().increment_num_of_occurrences(method)
             if getattr(URLTests, method)(url):
-                DBConnector().increment_num_of_occurrences(method)
-                if phishing:
                     DBConnector().increment_num_of_positives(method)
-                else:
-                    DBConnector().increment_num_of_negatives(method)
+            else:
+                DBConnector().increment_num_of_negatives(method)
 
     def get_positive_prior(self):
         return DBConnector().get_positive_prior() / DBConnector().get_total_number_of_entries()
