@@ -1,26 +1,39 @@
-from URLProcessingUtil import URLProcessingUtil
+from Utils import tokenize_url
 from urllib import parse
 
 
 class URLTests:
 
+    #Checks to see if the URL starts with 'https'.
     @staticmethod
     def test_one(url):
-        if url.startswith("https"):
-            return True
-        return False
+        b = False
+        if not url.startswith(("https://", "http://")):
+            b = True
+        print("Test One Results: " + str(b))
+        return b
+
 
     @staticmethod
     def test_two(url):
-        if url.endswith(".com"):
-            return True
-        return False
+        extensions = [".gov", ".exe", ".ru"]
+        b = False
+        if any(e in url for e in extensions):
+            b = True
+        print("Test Two Results: " + str(b))
+        return b
 
     @staticmethod
     def test_three(url):
-        if url.endswith(".gov"):
-            return True
-        return False
+        sen_words = ['confirm', 'account', 'login', 'signin', 'banking', 'bank']
+        count = 0
+        token_words = tokenize_url(url)
+        b = False
+        for e in token_words:
+            if e in sen_words:
+                b = True
+        print("Test Three Results: " + str(b))
+        return b
 
     # @staticmethod
     # def test_four(url):
