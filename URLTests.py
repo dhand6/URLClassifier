@@ -1,6 +1,8 @@
 from URLProcessingUtils import tokenize_url
-from urllib import parse
 import urllib.request
+import re
+from URLProcessingUtils import getURLIPAddress
+from DBConnector import DBConnector
 
 
 class URLTests:
@@ -13,42 +15,56 @@ class URLTests:
         b = False
         if not url.startswith(("https://", "http://")):
             b = True
-        print("Test One Results: " + str(b))
+        #print("Test One Results: " + str(b))
         return b
 
 
     @staticmethod
     def test_two(url):
-        extensions = [".gov", ".exe", ".ru"]
+        extensions = [".exe", ".ru", ".com.", ".org.", ".net.", ".int.", ".edu.", ".gov.", ".mil."]
         b = False
         if any(e in url for e in extensions):
             b = True
-        print("Test Two Results: " + str(b))
+        #print("Test Two Results: " + str(b))
         return b
 
     @staticmethod
     def test_three(url):
-        sen_words = ['confirm', 'account', 'login', 'signin', 'banking', 'bank']
+        sen_words = ['confirm', 'account', 'login', 'signin', 'banking', 'bank', '000webhostapp']
         count = 0
         token_words = tokenize_url(url)
         b = False
         for e in token_words:
             if e in sen_words:
                 b = True
-        print("Test Three Results: " + str(b))
+        #print("Test Three Results: " + str(b))
         return b
 
     @staticmethod
-    def test_four(url):
-        b = False
-        try:
-            source = str(op.open(url))
-            c = source.count('<iframe')
-            if c > 0:
-                b = True
-        except Exception as e:
-            print("Error " + str(e) + " in downloading page " + "url")
-        return b
+    def test_url_contains_ip_address(url):
+        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', url)
+        if ip != None:
+            return True
+        return False
+
+    @staticmethod
+    def test_ip_blacklisted(url):
+        ip = getURLIPAddress(url)
+        if DBConnector().is_ip_blacklisted(ip):
+            return True
+        return False
+
+    # @staticmethod
+    # def test_four(url):
+    #     b = False
+    #     try:
+    #         source = str(op.open(url))
+    #         c = source.count('<iframe')
+    #         if c > 0:
+    #             b = True
+    #     except Exception as e:
+    #         print("Error " + str(e) + " in downloading page " + "url")
+    #     return b
 
     # @staticmethod
     # def test_four(url):

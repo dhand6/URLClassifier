@@ -1,6 +1,11 @@
 from URLTests import URLTests
 from DBConnector import DBConnector
 from decimal import Decimal
+from URLProcessingUtils import getURLHostName
+from URLProcessingUtils import getURLIPAddress
+from URLProcessingUtils import getWhoIs
+from URLProcessingUtils import getResRange
+from URLProcessingUtils import getResCountry
 
 
 class FrequencyTable:
@@ -13,7 +18,8 @@ class FrequencyTable:
                 self.test_methods.append(method)
 
     def run_training(self, url, phishing):
-        DBConnector().create_url_info(url, phishing)
+        res = getWhoIs(url)
+        DBConnector().create_url_info(url, phishing, getURLHostName(url), getURLIPAddress(url), getResRange(res), getResCountry(res))
         for method in self.test_methods:
             if getattr(URLTests, method)(url):
                 DBConnector().increment_num_of_occurrences(method)

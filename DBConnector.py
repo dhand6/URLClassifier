@@ -89,8 +89,8 @@ class DBConnector(object):
     def create_record(self, test_name):
         self.__runQuery("INSERT INTO records(testName) VALUES(%s);", (str(test_name),))
 
-    def create_url_info(self, url, phishing):
-        self.__runQuery("INSERT INTO url_info(URL,Phishing) VALUES(%s,%s);", (str(url), phishing))
+    def create_url_info(self, url, phishing, host_name, ip_address, res_range, res_country):
+        self.__runQuery("INSERT INTO url_info(URL,Phishing,Hostname,IPAddress,IPRange,Region) VALUES(%s,%s,%s,%s,%s,%s);", (url, phishing,host_name, ip_address, res_range, res_country))
 
     def get_number_of_tests(self):
         return self.__runQuery("SELECT COUNT(testName) FROM records;", ())[0]
@@ -103,6 +103,9 @@ class DBConnector(object):
 
     def get_total_number_of_entries(self):
         return self.__runQuery("SELECT COUNT(ID) FROM url_info;", ())[0]
+
+    def is_ip_blacklisted(self, ip):
+        return self.__runQuery("SELECT COUNT(IPAddress) FROM url_info WHERE IPAddress = %s AND Phishing = TRUE;", (ip,))[0]
 
 
 
