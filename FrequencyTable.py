@@ -1,5 +1,6 @@
 from Record import Record
 from URLTests import URLTests
+from DBConector import DBConnector
 
 
 class FrequencyTable:
@@ -16,6 +17,7 @@ class FrequencyTable:
         for method in dir(URLTests):
             if method.startswith("test"):
                 self.frequency_table[method] = Record()
+                DBConnector().create_record(method)
                 self.test_methods.append(method)
 
     def run_training(self, url, phishing):
@@ -26,11 +28,14 @@ class FrequencyTable:
             self.negative_prior += 1
         for method in self.test_methods:
             if getattr(URLTests, method)(url):
+                DBConnector().increment_num_of_occurrences(method)
                 self.frequency_table.get(method).increment_num_of_occurrences()
                 if phishing:
+                    DBConnector().increment_num_of_positives(method)
                     self.frequency_table.get(method).increment_num_of_positives()
                     self.total_number_of_positives += 1
                 else:
+                    DBConnector().increment_num_of_negatives(method)
                     self.frequency_table.get(method).increment_num_of_negatives()
                     self.total_number_of_negatives += 1
 
@@ -48,12 +53,12 @@ class FrequencyTable:
         return self.negative_prior / self.total_number_of_entries
 
     def get_check_positive_likelihood(self, key):
-        return (self.frequency_table.get(key).get_num_of_positives() + 1) \
-            / (self.total_number_of_positives + self.frequency_table.keys().__len__())
+        return (DBConnector().get_num_of_positives(key) + 1) \
+            / (self.total_number_of_positives + DBConnector().get_number_of_tests())
 
     def get_check_negative_likelihood(self, key):
-        return (self.frequency_table.get(key).get_num_of_negatives() + 1) \
-            / (self.total_number_of_negatives + self.frequency_table.keys().__len__())
+        return (DBConnector().get_num_of_negatives(key) + 1) \
+            / (self.total_number_of_negatives + DBConnector().get_number_of_tests())
 
     def get_positive_prob(self):
         self.get_positive_prior()
@@ -67,4 +72,9 @@ class FrequencyTable:
         prob = self.get_positive_prior()
         for passedtest in passed_tests:
             prob = prob * self.get_check_positive_likelihood(passedtest)
-        print("prob = " + str(prob))
+        print("prob of phishing = " + str(prob))
+
+        prob = self.get_negative_prior()
+        for passedtest in passed_tests:
+            prob = prob * self.get_check_negative_likelihood(passedtest)
+        print("prob not phishing = " + str(prob))
