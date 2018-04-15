@@ -9,7 +9,7 @@ def tokenize_url(url):
     if url == '':
         return "url cannot be tokenized as it's empty"
     else:
-        tokens = re.split('\W+', url) 
+        tokens = re.split('\W+', url)
         return tokens
 
 def getURLRedirects(url):
