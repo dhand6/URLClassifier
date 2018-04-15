@@ -1,5 +1,5 @@
 from FrequencyTable import FrequencyTable
-from DBConector import DBConnector
+from DBConnector import DBConnector
 from URLTests import URLTests
 import csv
 
@@ -18,7 +18,7 @@ for url in samplePhishingData:
 sampleSafeData = ["https:\\www.youtube.com", "http:\\www.dcu.ie"]
 for url in sampleSafeData:
    c.run_training(url, False)
-c.print_library()
+#c.print_library()
 
 c.run_tests("https\\fishing.gov")
 #URLTests.test_four("http://fb-shieldprotect500000.000webhostapp.com/Payment-update-0.html?fb_source=bookmark_apps&amp")
